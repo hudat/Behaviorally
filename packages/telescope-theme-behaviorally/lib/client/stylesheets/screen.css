@@ -1,0 +1,195 @@
+body {
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255, 255, 255, 0.93)), color-stop(100%, rgba(255, 255, 255, 0.42))), url('http://lorempixel.com/400/300/'); /* Chrome,Safari4+ */
+  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.42)), url('/img/background.jpg'); /* Chrome10+,Safari5.1+ */
+  background-image:    -moz-linear-gradient(top, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.42)), url('/img/background.jpg'); /* FF3.6+ */
+  background-image:     -ms-linear-gradient(top, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.42)), url('/img/background.jpg'); /* IE10+ */
+  background-image:      -o-linear-gradient(top, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.42)), url('/img/background.jpg'); /* Opera 11.10+ */
+  background-image:         linear-gradient(to bottom, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.42)), url('/img/background.jpg'); /* W3C */
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+h2 {
+  color: #36467B;
+  font-family: Georgia, Baskerville, Serif;
+  font-weight: bold;
+}
+
+h3 {
+  color: #36467B;
+  font-family: Georgia, Baskerville, Serif;
+}
+
+/*header*/
+.header {
+  border-bottom: 2px solid #B8B8B8;
+  background: #fff;
+}
+
+.header .logo a {
+  color: #36467B !important;
+  font-family: Georgia, Baskerville, Serif;
+  letter-spacing: .5px;
+}
+
+.header .nav a {
+  color: #333;
+}
+
+.submit {
+  background: #FD8382;
+  border: 2px solid #FD8382;
+  color: #FFF !important;
+}
+
+.submit:hover {
+  background: #FD8382;
+  border: 2px solid #FD8382;
+  color: #fff !important;
+}
+
+.search.empty .search-field {
+  background: #EDEDED;
+  }
+
+.search.empty .search-field:focus {
+  background: #EDEDED;
+}
+
+/*NEWSLETTER*/
+
+.newsletter-tagline {
+  font-size: 20px;
+  font-weight: normal;
+  letter-spacing: .2px;
+}
+.newsletter-banner.grid-module.grid {
+  background: #f0f567;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.newsletter-tagline {
+  color: #333;
+}
+
+.button.button.newsletter-button {
+  background: #FD8382;
+  color: #FFF;
+}
+
+/*POST*/
+.post {
+  border-bottom: none;
+  padding: 5px;
+}
+
+.posts-day-heading {
+  text-align: center;
+}
+
+a.post-title {
+  color: #263259;
+}
+
+a.post-title:hover {
+  color: #36467B;
+}
+
+.post-heading .post-title:visited {
+  color: #B5B5B5;
+}
+.more-button {
+  background: #FD8382;
+  color: #FFF !important;
+}
+
+.more-button:hover {
+  background: #FD8382;
+  color: #fff !important;
+}
+
+.post-upvote .upvote-link i {
+  border: 1px solid rgba(0, 190, 140, 1);
+  color: rgba(0, 190, 140, 1);
+}
+
+.post-rank span {
+  color: #555;
+}
+
+/*POST VIEW*/
+.grid.submit {
+  background: none;
+  border: none;
+}
+
+.grid.submit:hover {
+  background: none;
+  border: none;
+}
+
+.control-label {
+  color: #333;
+}
+
+.radio {
+  color: #222;
+}
+
+input.button {
+  background: #FD8382;
+}
+
+/*ERROR*/
+
+.error {
+  background-color: #40BE9D;
+  font-size: 16px;
+}
+
+/*ABOUT PAGE*/
+
+.grid.grid-module.about {
+  max-width: 700px;
+  border-radius: 4px;
+}
+
+.page-title h2 {
+  text-align: center;
+  font-size: 24px;
+  padding-bottom: 20px;
+}
+
+
+.grid.grid-module.about p {
+  font-size: 18px;
+}
+
+.grid.grid-module.about li {
+  font-size: 18px;
+}
+
+.faq {
+  padding-bottom: 40px;
+}
+
+
+/*mobile*/
+
+
+
+a.mobile-only.mobile-menu-button.button {
+  background: #FD8382;
+}
+
+.mobile-nav {
+  background: #36467B;
+}
+
+.mobile-menu .dropdown-menu {
+  background: #263259;
+}
