@@ -15,6 +15,7 @@ email
 accounts-facebook
 service-configuration
 accounts-ui
+reactive-var
 
 # Atmosphere Packages
 
@@ -24,7 +25,7 @@ meteorhacks:fast-render
 meteorhacks:subs-manager
 meteorhacks:npm
 
-aldeed:autoform
+aldeed:autoform@4.0.0-rc1
 aldeed:collection2
 aldeed:simple-schema
 
@@ -64,16 +65,18 @@ telescope-search
 telescope-tags
 telescope-theme-hubble
 telescope-email
-telescope-module-embedly
+telescope-embedly
 telescope-newsletter
 telescope-daily
 telescope-update-prompt
 telescope-kadira
-
 telescope-notifications
+telescope-singleday
+telescope-invites
 
 # Accounts Templates
 useraccounts:unstyled
 telescope-theme-behaviorally
 linto:fontawesome
-
+telescope-datetimepicker
+tsega:bootstrap3-datetimepicker@3.1.3_1

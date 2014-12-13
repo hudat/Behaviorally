@@ -5,6 +5,10 @@
       "1.1.2"
     ],
     [
+      "aldeed:simple-schema",
+      "1.1.0"
+    ],
+    [
       "application-configuration",
       "1.0.3"
     ],
@@ -46,7 +50,7 @@
     ],
     [
       "ddp",
-      "1.0.11"
+      "1.0.12"
     ],
     [
       "deps",
@@ -78,7 +82,7 @@
     ],
     [
       "iron:controller",
-      "1.0.0"
+      "1.0.3"
     ],
     [
       "iron:core",
@@ -98,11 +102,11 @@
     ],
     [
       "iron:middleware-stack",
-      "1.0.0"
+      "1.0.3"
     ],
     [
       "iron:router",
-      "1.0.1"
+      "1.0.3"
     ],
     [
       "iron:url",
@@ -134,11 +138,11 @@
     ],
     [
       "meteorhacks:fast-render",
-      "1.2.1"
+      "2.1.0"
     ],
     [
       "meteorhacks:subs-manager",
-      "1.2.0"
+      "1.2.2"
     ],
     [
       "minifiers",
@@ -150,11 +154,7 @@
     ],
     [
       "mongo",
-      "1.0.8"
-    ],
-    [
-      "mongo-livedata",
-      "1.0.6"
+      "1.0.9"
     ],
     [
       "observe-sequence",
@@ -221,6 +221,10 @@
       "0.2.9"
     ],
     [
+      "telescope-singleday",
+      "0.1.0"
+    ],
+    [
       "templating",
       "1.0.9"
     ],
@@ -246,6 +250,6 @@
     ]
   ],
   "pluginDependencies": [],
-  "toolVersion": "meteor-tool@1.0.35",
+  "toolVersion": "meteor-tool@1.0.36",
   "format": "1.0"
 }

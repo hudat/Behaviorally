@@ -1,6 +1,10 @@
 {
   "dependencies": [
     [
+      "aldeed:simple-schema",
+      "1.1.0"
+    ],
+    [
       "application-configuration",
       "1.0.3"
     ],
@@ -38,7 +42,7 @@
     ],
     [
       "ddp",
-      "1.0.11"
+      "1.0.12"
     ],
     [
       "deps",
@@ -102,7 +106,7 @@
     ],
     [
       "meteorhacks:kadira",
-      "2.14.0"
+      "2.15.1"
     ],
     [
       "meteorhacks:kadira-binary-deps",
@@ -110,7 +114,7 @@
     ],
     [
       "meteorhacks:meteorx",
-      "1.2.0"
+      "1.2.1"
     ],
     [
       "minifiers",
@@ -122,7 +126,7 @@
     ],
     [
       "mongo",
-      "1.0.8"
+      "1.0.9"
     ],
     [
       "mongo-livedata",
@@ -218,6 +222,6 @@
     ]
   ],
   "pluginDependencies": [],
-  "toolVersion": "meteor-tool@1.0.35",
+  "toolVersion": "meteor-tool@1.0.36",
   "format": "1.0"
 }

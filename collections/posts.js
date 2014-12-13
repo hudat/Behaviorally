@@ -1,94 +1,202 @@
+
+// ------------------------------------------------------------------------------------------- //
+// ----------------------------------------- Schema ----------------------------------------- //
+// ------------------------------------------------------------------------------------------- //
+
+SimpleSchema.extendOptions({
+  editable: Match.Optional(Boolean) // editable: true means the field can be edited by the document's owner
+});
+
 postSchemaObject = {
   _id: {
     type: String,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   createdAt: {
     type: Date,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   postedAt: {
     type: Date,
-    optional: true
-  },
-  title: {
-    type: String,
-    label: "Title"
+    optional: true,
+    autoform: {
+      group: 'admin',
+      type: "bootstrap-datetimepicker"
+    }
   },
   url: {
     type: String,
     label: "URL",
-    optional: true
+    optional: true,
+    autoform: {
+      editable: true,
+      type: "bootstrap-url"
+    }
+  },
+  title: {
+    type: String,
+    optional: false,
+    label: "Title",
+    editable: true,
+    autoform: {
+      editable: true
+    }
   },
   body: {
     type: String,
-    optional: true
+    optional: true,
+    editable: true,
+    autoform: {
+      editable: true,
+      rows: 5
+    }
   },
   htmlBody: {
     type: String,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   viewCount: {
     type: Number,
-    optional: false
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   commentCount: {
     type: Number,
-    optional: false
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   commenters: {
     type: [String],
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   lastCommentedAt: {
     type: Date,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   clickCount: {
     type: Number,
-    optional: false
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   baseScore: {
     type: Number,
     decimal: true,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   upvotes: {
     type: Number,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   upvoters: {
     type: [String], // XXX
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   downvotes: {
     type: Number,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   downvoters: {
     type: [String], // XXX
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   score: {
     type: Number,
     decimal: true,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   status: {
     type: Number,
-    optional: true
+    optional: true,
+    autoValue: function () {
+      // only provide a default value
+      // 1) this is an insert operation
+      // 2) status field is not set in the document being inserted
+      var user = Meteor.users.findOne(this.userId);  
+      if (this.isInsert && !this.isSet)
+        return getDefaultPostStatus(user);
+    },
+    autoform: {
+      noselect: true,
+      options: postStatuses,
+      group: 'admin'
+    }
   },
   sticky: {
     type: Boolean,
-    optional: true
+    optional: true,
+    defaultValue: false,
+    autoform: {
+      group: 'admin',
+      leftLabel: "Sticky"
+    }
   },
   inactive: {
     type: Boolean,
-    optional: true
+    optional: true,
+    autoform: {
+      omit: true
+    }
+  },
+  author: {
+    type: String,
+    optional: true,
+    autoform: {
+      omit: true
+    }
   },
   userId: {
     type: String, // XXX
-    optional: true
+    optional: true,
+    autoform: {
+      group: 'admin',
+      options: function () {
+        return Meteor.users.find().map(function (user) {
+          return {
+            value: user._id,
+            label: getDisplayName(user)
+          }
+        });
+      }
+    }
   }
 };
 
@@ -102,39 +210,36 @@ Posts = new Meteor.Collection("posts");
 PostSchema = new SimpleSchema(postSchemaObject);
 Posts.attachSchema(PostSchema);
 
-STATUS_PENDING=1;
-STATUS_APPROVED=2;
-STATUS_REJECTED=3;
+// Posts.deny({
+//   update: function(userId, post, fieldNames) {
+//     if(isAdminById(userId))
+//       return false;
+//     // deny the update if it contains something other than the following fields
+//     return (_.without(fieldNames, 'title', 'url', 'body', 'shortUrl', 'shortTitle', 'categories').length > 0);
+//   }
+// });
 
-Posts.deny({
-  update: function(userId, post, fieldNames) {
-    if(isAdminById(userId))
-      return false;
-    // deny the update if it contains something other than the following fields
-    return (_.without(fieldNames, 'title', 'url', 'body', 'shortUrl', 'shortTitle', 'categories').length > 0);
-  }
-});
+// Posts.allow({
+//   update: canEditById,
+//   remove: canEditById
+// });
 
-Posts.allow({
-  update: canEditById,
-  remove: canEditById
-});
+// ------------------------------------------------------------------------------------------- //
+// ----------------------------------------- Helpers ----------------------------------------- //
+// ------------------------------------------------------------------------------------------- //
 
-postClicks = [];
-postViews = [];
-
-getPostProperties = function(post) {
+getPostProperties = function (post) {
 
   var postAuthor = Meteor.users.findOne(post.userId);
   var p = {
     postAuthorName : getDisplayName(postAuthor),
     postTitle : cleanUp(post.title),
-    profileUrl: getProfileUrlById(post.userId),
+    profileUrl: getProfileUrlBySlugOrId(post.userId),
     postUrl: getPostPageUrl(post),
     thumbnailUrl: post.thumbnailUrl,
     linkUrl: !!post.url ? getOutgoingUrl(post.url) : getPostPageUrl(post._id)
   };
-  
+
   if(post.url)
     p.url = post.url;
 
@@ -143,6 +248,17 @@ getPostProperties = function(post) {
 
   return p;
 };
+
+// default status for new posts
+getDefaultPostStatus = function (user) {
+  if (isAdmin(user) || !getSetting('requirePostsApproval', false)) {
+    // if user is admin, or else post approval is not required
+    return STATUS_APPROVED
+  } else {
+    // else
+    return STATUS_PENDING
+  }
+}
 
 getPostPageUrl = function(post){
   return getSiteUrl()+'posts/'+post._id;
@@ -157,6 +273,23 @@ getPostLink = function (post) {
   return !!post.url ? getOutgoingUrl(post.url) : getPostPageUrl(post);
 };
 
+checkForPostsWithSameUrl = function (url) {
+
+  // check that there are no previous posts with the same link in the past 6 months
+  var sixMonthsAgo = moment().subtract(6, 'months').toDate();
+  var postWithSameLink = Posts.findOne({url: url, postedAt: {$gte: sixMonthsAgo}});
+
+  if(typeof postWithSameLink !== 'undefined'){
+    Meteor.call('upvotePost', postWithSameLink);
+    // note: error.details returns undefined on the client, so add post ID to reason
+    throw new Meteor.Error('603', i18n.t('this_link_has_already_been_posted') + '|' + postWithSameLink._id, postWithSameLink._id);
+  }
+}
+
+// ------------------------------------------------------------------------------------------- //
+// ------------------------------------------ Hooks ------------------------------------------ //
+// ------------------------------------------------------------------------------------------- //
+
 Posts.before.insert(function (userId, doc) {
   if(Meteor.isServer && !!doc.body)
     doc.htmlBody = sanitize(marked(doc.body));
@@ -170,8 +303,16 @@ Posts.before.update(function (userId, doc, fieldNames, modifier, options) {
   }
 });
 
+// ------------------------------------------------------------------------------------------- //
+// ----------------------------------------- Methods ----------------------------------------- //
+// ------------------------------------------------------------------------------------------- //
+
+postClicks = [];
+postViews = [];
+
 Meteor.methods({
-  post: function(post){
+
+  submitPost: function(post){
     var title = cleanUp(post.title),
         body = post.body,
         userId = this.userId,
@@ -181,7 +322,6 @@ Meteor.methods({
         postInterval = Math.abs(parseInt(getSetting('postInterval', 30))),
         maxPostsPer24Hours = Math.abs(parseInt(getSetting('maxPostsPerDay', 30))),
         postId = '';
-    
 
     // ------------------------------ Checks ------------------------------ //
 
@@ -193,17 +333,11 @@ Meteor.methods({
     if(!post.title)
       throw new Meteor.Error(602, i18n.t('please_fill_in_a_title'));
 
+    // check that there are no posts with the same URL
+    if(!!post.url)
+      checkForPostsWithSameUrl(post.url);
 
-    if(!!post.url){
-      // check that there are no previous posts with the same link in the past 6 months
-      var sixMonthsAgo = moment().subtract(6, 'months').toDate();
-      var postWithSameLink = Posts.findOne({url: post.url, postedAt: {$gte: sixMonthsAgo}});
-
-      if(typeof postWithSameLink !== 'undefined'){
-        Meteor.call('upvotePost', postWithSameLink);
-        throw new Meteor.Error(603, i18n.t('this_link_has_already_been_posted'), postWithSameLink._id);
-      }
-    }
+    // --------------------------- Rate Limiting -------------------------- //
 
     if(!isAdmin(Meteor.user())){
       // check that user waits more than X seconds between posts
@@ -233,17 +367,18 @@ Meteor.methods({
       inactive: false
     };
 
-    // UserId    
+    // UserId
     if(isAdmin(Meteor.user()) && !!post.userId){ // only let admins post as other users
-      properties.userId = post.userId; 
+      properties.userId = post.userId;
     }
 
     // Status
-    var defaultPostStatus = getSetting('requirePostsApproval') ? STATUS_PENDING : STATUS_APPROVED;
-    if(isAdmin(Meteor.user()) && !!post.status){ // if user is admin and a custom status has been set
+    if(!!post.status && isAdmin(Meteor.user())){
+      // if a custom status has been set, and user is admin, use that
       properties.status = post.status;
-    }else{ // else use default status
-      properties.status = defaultPostStatus; 
+    }else{
+      // else use default status
+      properties.status = getDefaultPostStatus(Meteor.user());
     }
 
     // CreatedAt
@@ -279,7 +414,7 @@ Meteor.methods({
         return currentFunction(result);
     }, post);
 
-    // ------------------------------ Post-Insert ------------------------------ //
+    // ------------------------------ After Insert ------------------------------ //
 
     // increment posts count
     Meteor.users.update({_id: userId}, {$inc: {postCount: 1}});
@@ -290,33 +425,77 @@ Meteor.methods({
 
     return post;
   },
+
+  editPost: function (postId, updateObject) {
+
+    var user = Meteor.user();
+
+    // console.log(updateObject)
+
+    // ------------------------------ Checks ------------------------------ //
+
+    // check that user can edit
+    if (!user || !canEdit(user, Posts.findOne(postId)))
+      throw new Meteor.Error(601, i18n.t('sorry_you_cannot_edit_this_post'));
+
+    // ------------------------------ Callbacks ------------------------------ //
+
+    // run all post submit server callbacks on updateObject successively
+    updateObject = postEditMethodCallbacks.reduce(function(result, currentFunction) {
+        return currentFunction(result);
+    }, updateObject);
+
+    console.log(updateObject)
+
+    // ------------------------------ Update ------------------------------ //
+
+    Posts.update(postId, updateObject);
+
+    // ------------------------------ Callbacks ------------------------------ //
+
+    // run all post submit server callbacks on updateObject successively
+    updateObject = postAfterEditMethodCallbacks.reduce(function(result, currentFunction) {
+        return currentFunction(result);
+    }, updateObject);
+
+    // ------------------------------ After Update ------------------------------ //
+
+    return Posts.findOne(postId);
+
+  },
+
   setPostedAt: function(post, customPostedAt){
 
     var postedAt = new Date(); // default to current date and time
-        
+
     if(isAdmin(Meteor.user()) && typeof customPostedAt !== 'undefined') // if user is admin and a custom datetime has been set
       postedAt = customPostedAt;
 
     Posts.update(post._id, {$set: {postedAt: postedAt}});
   },
-  post_edit: function(post){
-    // TODO: make post_edit server-side?
-  },
+
   approvePost: function(post){
     if(isAdmin(Meteor.user())){
-      var now = new Date();
-      Posts.update(post._id, {$set: {status: 2, postedAt: now}});
+      var set = {status: 2};
+
+      // unless post is already scheduled and has a postedAt date, set its postedAt date to now
+      if (!post.postedAt)
+        set.postedAt = new Date();
+      
+      var result = Posts.update(post._id, {$set: set}, {validate: false});
     }else{
-      throwError('You need to be an admin to do that.');
+      flashMessage('You need to be an admin to do that.', "error");
     }
   },
+
   unapprovePost: function(post){
     if(isAdmin(Meteor.user())){
       Posts.update(post._id, {$set: {status: 1}});
     }else{
-      throwError('You need to be an admin to do that.');
+      flashMessage('You need to be an admin to do that.', "error");
     }
   },
+
   increasePostViews: function(postId, sessionId){
     this.unblock();
 
@@ -328,7 +507,8 @@ Meteor.methods({
         Posts.update(postId, { $inc: { viewCount: 1 }});
     }
   },
-    increasePostClicks: function(postId, sessionId){
+
+  increasePostClicks: function(postId, sessionId){
     this.unblock();
 
     // only let clients increment a post's click counter once per session
@@ -339,6 +519,7 @@ Meteor.methods({
       Posts.update(postId, { $inc: { clickCount: 1 }});
     }
   },
+
   deletePostById: function(postId) {
     // remove post comments
     // if(!this.isSimulation) {
@@ -346,11 +527,15 @@ Meteor.methods({
     // }
     // NOTE: actually, keep comments after all
 
-    // decrement post count
     var post = Posts.findOne({_id: postId});
+    
     if(!Meteor.userId() || !canEditById(Meteor.userId(), post)) throw new Meteor.Error(606, 'You need permission to edit or delete a post');
     
+    // decrement post count
     Meteor.users.update({_id: post.userId}, {$inc: {postCount: -1}});
+    
+    // delete post
     Posts.remove(postId);
   }
+
 });

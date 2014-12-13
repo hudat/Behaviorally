@@ -6,6 +6,9 @@ Template[getTemplate('userMenu')].helpers({
     return getDisplayName(Meteor.user());
   },
   profileUrl: function () {
-    return getProfileUrl(Meteor.user());
+    return Router.routes['user_profile'].path({_idOrSlug: Meteor.user().slug});
+  },
+  userEditUrl: function () {
+    return Router.routes['user_edit'].path(Meteor.user());
   }
 });

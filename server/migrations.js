@@ -404,5 +404,30 @@ var migrationsList = {
       console.log("---------------------");
     });
     return i;
+  },
+  normalizeCategories: function () {
+    var i = 0;
+    Posts.find({'categories': {$exists: true}}).forEach(function (post) {
+      i++;
+      console.log("Post: " + post._id);
+      var justCategoryIds = post.categories.map(function (category){
+        return category._id;
+      });
+      var result = Posts.update(post._id, {$set: {categories: justCategoryIds, oldCategories: post.categories}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;    
+  },
+  cleanUpStickyProperty: function () {
+    var i = 0;
+    Posts.find({'sticky': {$exists: false}}).forEach(function (post) {
+      i++;
+      console.log("Post: " + post._id);
+      var result = Posts.update(post._id, {$set: {sticky: false}}, {multi: true, validate: false});
+      console.log("---------------------");
+    });
+    return i;    
   }
 };
+
+// TODO: normalize categories?
