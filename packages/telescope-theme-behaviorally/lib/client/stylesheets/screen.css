@@ -40,8 +40,11 @@ h3 {
   color: #333;
 }
 
-.submit {
+a#submit {
   background: #FD8382;
+}
+
+.submit {
   border: 2px solid #FD8382;
   color: #FFF !important;
 }
